@@ -1,0 +1,34 @@
+<html>
+    <head>
+        <script  type="text/javascript" src="./js/socket.io.min.js"   crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script  type="text/javascript" src="./js/beaver.js" defer></script>
+        <script  type="text/javascript" src="./js/JZZ.js"></script>
+        <script  type="text/javascript" src="./js/JZZ.synth.Tiny.js"></script>    
+        <script  type="text/javascript" src="./js/JZZ.midi.SMF.js"></script> 
+        <script  type="text/javascript" src="./js/index.js" defer></script>
+        <link    rel="stylesheet" href="./index.css">
+    </head>
+    <body>
+        <div class="debug">
+<!--            <pre class="time"></pre>
+            <pre class="time2"></pre> -->
+    <!--        <pre class="dbg"></pre>-->
+    <!--        <pre class="channels"></pre>-->
+        </div>
+        <div class="startandconfig">
+            <div class="flexitem playbuttondiv "><button class="play  buttonstyle1">Play!</button></div>
+            <div class="flexitem configbuttondiv"><button class="configbutton  buttonstyle1">Setup</button></div>
+            <div class="flexitem configdiv">
+                <label for="paretoip">Pareto IP:</label>
+                <input type="text" id="paretoip" name="paretoip" /><BR>
+                <label for="paretoport">Pareto Port:</label>
+                <input type="text" id="paretoport" name="paretoport" /><BR>
+                    <button class="configformbutton savebutton">Save</button>
+                    <button class="configformbutton restorebutton">Restore Defaults</button>
+            </div>
+        </div>
+        <div class="countdowncontainer">
+            <div class="countdown"></div>
+        </div>
+    </body>
+</html>
