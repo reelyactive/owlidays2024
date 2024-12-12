@@ -33,22 +33,22 @@ Installation
 Clone this repository, then run the following commands:
 
 ```
-cd owliday2024
+cd owlidays2024
 npm install
 cd bin
 ./installservice.sh
-systemctl --user start owliday2024.service 
+systemctl --user start owlidays2024.service 
 ```
 
 Now it should be running.
 
-You may choose to edit index.js to set the values for:
+You may choose to edit web/js/index.js to set the values for:
 ```
 DEFAULT_BEAVER_URL = IP ADDRESS OF PARETO ANYWHERE
 DEFAULT_BEAVER_PORT = PORT OF PARETO ANYWHERE
 ```
 
-If you don't, it will default to the same IP address as the service.
+If you don't, it will default to the same IP address as the service. You can change these values in the web interface itself.
 
 With as many cell phones as you want, connect to the same network that this service is running on.
 
@@ -64,7 +64,7 @@ Enjoy the festivities!
 Customizing the performance
 ============================
 
-**lib/owliday2024.js** : At the top of the file, you can change the midifile to play. Songs with lots of differerent parts are the most fun.
+**bin/owlidays2024** : In the options objecdt, you can change the midifile to play. Songs with lots of differerent parts are the most fun. You can also change the WEBSERVER_PORT and WEBSOCKET_PORT to change the port the service runs on.
 
 **web/js/index.js** : You can change the images for the singers, and the icons for the dynambs.
 
