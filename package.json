@@ -1,16 +1,16 @@
 {
-  "name": "owliday2024",
+  "name": "owlidays2024",
   "version": "1.0.0",
   "description": "owliday fun",
-  "main": "index.node.js",
+  "main": "owlidays2024.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start" : "node bin/owlidays2024"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "reelyActive",
+  "license": "MIT",
   "dependencies": {
     "connect": "^3.7.0",
-    "fs": "^0.0.1-security",
     "install": "^0.13.0",
     "midi-file": "^1.2.4",
     "midi-parser-js": "^4.0.4",
@@ -20,5 +20,9 @@
     "socket.io": "^4.8.1",
     "socket.io-client": "^4.8.1",
     "ws": "^8.18.0"
-  }
+  },
+  "contributors": [
+    { "name": "Jeffrey Dungen" },
+    { "name": "Don Undeen" }
+  ]
 }

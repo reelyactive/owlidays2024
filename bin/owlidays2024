@@ -1,0 +1,5 @@
+#!/usr/bin/env node
+
+const Owlidays2024 = require("../lib/owlidays2024.js");
+
+let owlidays = new Owlidays2024();
