@@ -2,4 +2,12 @@
 
 const Owlidays2024 = require("../lib/owlidays2024.js");
 
-let owlidays = new Owlidays2024("Pogues_Fairy_Tale_In_New_York_City.mid");
+let options = {
+    midifile : "Pogues_Fairy_Tale_In_New_York_City.mid",
+    mididir : __dirname+"/../web/midi",
+    WEBSOCKET_PORT : 8098,
+    WEBSERVER_PORT : 3003,
+    UDPLISTENPORT : 8089
+}
+
+let owlidays = new Owlidays2024(options);
