@@ -5,7 +5,7 @@
   "main": "owlidays2024.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start" : "node bin/owlidays2024"
+    "start" : "bin/owlidays2024"
   },
   "author": "reelyActive",
   "license": "MIT",

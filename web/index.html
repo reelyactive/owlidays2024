@@ -1,34 +1,211 @@
+<!doctype html>
 <html>
     <head>
+        <meta name="viewport"
+        content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <meta name="description" content="Owlidays 2024 creates a choir of cellphones (or any device with a browser) that coordinate a performance of holiday spirit, fueled by data from ParetoAnywhere!">
         <script  type="text/javascript" src="./js/socket.io.min.js"   crossorigin="anonymous" referrerpolicy="no-referrer"></script>
         <script  type="text/javascript" src="./js/beaver.js" defer></script>
         <script  type="text/javascript" src="./js/JZZ.js"></script>
         <script  type="text/javascript" src="./js/JZZ.synth.Tiny.js"></script>    
-        <script  type="text/javascript" src="./js/JZZ.midi.SMF.js"></script> 
+        <script  type="text/javascript" src="./js/JZZ.midi.SMF.js"></script>
+        <script type="module" src="./js/color-modes.js"></script>
         <script  type="text/javascript" src="./js/index.js" defer></script>
         <link    rel="stylesheet" href="./index.css">
+        <link    rel="stylesheet" href="./bootstrappyactive.min.css">
     </head>
     <body>
-        <div class="debug">
-<!--            <pre class="time"></pre>
-            <pre class="time2"></pre> -->
-    <!--        <pre class="dbg"></pre>-->
-    <!--        <pre class="channels"></pre>-->
-        </div>
-        <div class="startandconfig">
-            <div class="flexitem playbuttondiv "><button class="play  buttonstyle1">Play!</button></div>
-            <div class="flexitem configbuttondiv"><button class="configbutton  buttonstyle1">Setup</button></div>
-            <div class="flexitem configdiv">
-                <label for="paretoip">Pareto IP:</label>
-                <input type="text" id="paretoip" name="paretoip" /><BR>
-                <label for="paretoport">Pareto Port:</label>
-                <input type="text" id="paretoport" name="paretoport" /><BR>
-                    <button class="configformbutton savebutton">Save</button>
-                    <button class="configformbutton restorebutton">Restore Defaults</button>
+        <!-- Navigation -->
+        <nav class="navbar sticky-top navbar-expand-lg bg-body-tertiary shadow">
+            <div class="container-fluid">
+            <a class="navbar-brand" href="https://www.reelyactive.com/">
+                <img src="./images/reelyactive-logo-square-nav.png"
+                    width="30" height="30" alt="reelyActive">
+            </a>
+            <a class="navbar-brand" href="../">
+                <img src="./images/pareto-apps-logo-nav.png" width="135" height="30"
+                    alt="Pareto Apps">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarItems" aria-controls="navbarItems"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarItems">
+                <!-- Left-aligned navigation items -->
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                </ul>
+                <!-- Right-aligned navigation items -->
+                <ul class="navbar-nav">
+
+                <!-- Colour theme chooser -->
+                <li class="nav-item dropdown">
+                    <button class="btn btn-link nav-link dropdown-toggle"
+                            id="bd-theme" type="button" aria-expanded="false"
+                            data-bs-toggle="dropdown" data-bs-display="static"
+                            aria-label="Toggle theme (auto)">
+                    <i class="fas fa-adjust"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end shadow"
+                        aria-labelledby="bd-theme-text">
+                    <li>
+                        <button type="button" class="dropdown-item"
+                                data-bs-theme-value="light" aria-pressed="false">
+                        <i class="fas fa-sun"></i> Light - You don't want this
+                        </button>
+                    </li>
+                    <li>
+                        <button type="button" class="dropdown-item"
+                                data-bs-theme-value="dark" aria-pressed="false">
+                        <i class="fas fa-moon"></i> Dark - Keep this
+                        </button>
+                    </li>
+                    <li>
+                        <button type="button" class="dropdown-item active"
+                                data-bs-theme-value="auto" aria-pressed="true">
+                        <i class="fas fa-adjust"></i> Auto - Seriously, dark mode is best
+                        </button>
+                    </li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" id="navbarInfoDropdown"
+                    role="button" data-bs-toggle="dropdown" aria-haspopup="true"
+                    aria-expanded="false">
+                    <i class="fas fa-question-circle"></i>
+                    </a>
+                    <!-- Info about tracking and open source software/licenses -->
+                    <ul class="dropdown-menu dropdown-menu-end shadow"
+                        aria-labelledby="navbarInfoDropdown">
+                    <li>
+                        <a class="dropdown-item"
+                        href="https://www.reelyactive.com/how-we-observe/#digital">
+                        <i class="fas fa-mouse-pointer"></i>
+                        Behaviour tracking free &nbsp;
+                        <span class="badge bg-success animate-breathing">
+                            <i class="fas fa-user-shield"></i>
+                        </span>
+                        <!--<i class="fas fa-mouse-pointer"></i>
+                        Privacy-centric metrics
+                        (<i class="fab fa-cloudflare"></i> beacon.js) &nbsp;
+                        <span class="badge bg-warning animate-breathing">
+                            <i class="fas fa-user-tag"></i>
+                        </span>-->
+                        <!--<i class="fas fa-mouse-pointer"></i>
+                        Page view tracking (gtag.js) &nbsp;
+                        <span class="badge bg-warning animate-breathing">
+                            <i class="fas fa-user-tag"></i>
+                        </span>-->
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" target="_blank"
+                        href="https://dtpr.io" >
+                        <i class="fas fa-info-circle"></i>
+                        DTPR &nbsp;
+                        <span class="badge bg-light text-dark">
+                            <i class="fab fa-osi"></i> Apache-2.0
+                        </span>
+                        </a>
+                    </li>
+                    <li class="dropdown-divider"></li>
+                    <li>
+                        <a class="dropdown-item" target="_blank"
+                        href="https://getbootstrap.com" >
+                        <i class="fab fa-bootstrap"></i>
+                        Bootstrap 5 &nbsp;
+                        <span class="badge bg-light text-dark">
+                            <i class="fab fa-osi"></i> MIT
+                        </span>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" target="_blank"
+                        href="https://fontawesome.com" >
+                        <i class="fab fa-font-awesome"></i>
+                        Font Awesome (Free) &nbsp;
+                        <span class="badge bg-light text-dark">
+                            <i class="fab fa-creative-commons"></i>
+                            <i class="fab fa-osi"></i> MIT
+                        </span>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" target="_blank"
+                        href="https://jazz-soft.net/doc/JZZ/" >
+                        <i class="fab fa-font-awesome"></i>
+                        JZZ-MIDI &nbsp;
+                        <span class="badge bg-light text-dark">
+                            <i class="fab fa-osi"></i> MIT
+                        </span>
+                        </a>
+                    </li>    
+                    <li>
+                        <a class="dropdown-item" target="_blank"
+                        href="https://socket.io/" >
+                        <i class="fab fa-font-awesome"></i>
+                        Socket.io &nbsp;
+                        <span class="badge bg-light text-dark">
+                            <i class="fab fa-osi"></i> MIT
+                        </span>
+                        </a>
+                    </li>                    
+                    <li>
+                        <a class="dropdown-item" target="_blank"
+                        href="https://github.com/reelyactive/web-style-guide/" >
+                        <i class="fas fa-code"></i>
+                        Web Style Guide &nbsp;
+                        <span class="badge bg-light text-dark">
+                            <i class="fab fa-osi"></i> MIT
+                        </span>
+                        </a>
+                    </li>
+                    <li class="dropdown-divider"></li>
+                    <li>
+                        <a class="dropdown-item" target="_blank"
+                        href="https://www.reelyactive.com/made-in-montreal/" >
+                        <i class="fab fa-canadian-maple-leaf"></i>
+                        Made in Montr&eacute;al &nbsp;
+                        <i class="fas fa-city"></i>
+                        </a>
+                    </li>
+                    </ul>
+                </li>
+                </ul>
+            </div>
+            </div>
+        </nav>
+
+        <div id="owlidaycontent" class="owlidaycontent">
+
+            <div class="startandconfig">
+                <div class="flexitem playbuttondiv "><button class="play  buttonstyle1">Play!</button></div>
+                <div class="flexitem configbuttondiv"><button class="configbutton  buttonstyle1">Setup</button></div>
+                <div class="flexitem configdiv">
+                    <label for="paretoip">Pareto IP:</label>
+                    <input type="text" id="paretoip" name="paretoip" /><BR>
+                    <label for="paretoport">Pareto Port:</label>
+                    <input type="text" id="paretoport" name="paretoport" /><BR>
+                        <button class="configformbutton savebutton">Save</button>
+                        <button class="configformbutton restorebutton">Restore Defaults</button>
+                </div>
+            </div>
+            <div class="countdowncontainer">
+                <div class="countdown"></div>
             </div>
         </div>
-        <div class="countdowncontainer">
-            <div class="countdown"></div>
-        </div>
+
+        <footer id="footer"class="footer bg-dark bg-gradient sticky-bottom">
+            <a href="https://github.com/reelyactive/projectname"> Owlidays 2024 </a>
+            &nbsp; | &nbsp;
+            <a href="https://www.reelyactive.com"> &copy; reelyActive 2024 </a>
+        </footer>
+
+
+        <!-- Optional JavaScript -->
+        <script defer src="./js/fontawesome-reelyactive.min.js"></script>
+        <script src="./js/bootstrappyactive.bundle.min.js"></script>
+
     </body>
 </html>

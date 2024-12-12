@@ -105,60 +105,30 @@ let wsready = false;
 var singerOrigWidth = 160;
 var singerOrigHeight = 160;
 
+/*
 var screenwidth = (window.innerWidth > 0) ? window.innerWidth : screen.width;
 var screenheight = (window.innerHeight > 0) ? window.innerHeight : screen.height;
+*/
+var footerheight = document.getElementById("footer").clientHeight;
+var screenwidth = document.getElementById("owlidaycontent").clientWidth;
+var screenheight = document.getElementById("owlidaycontent").clientHeight - footerheight;
+
+
+console.log("screenwidth", screenwidth);
+console.log("screenheight", screenheight);
 
 var singerWidth = Math.floor(screenwidth / 6);
 var singerRatio = singerWidth / singerOrigWidth;
 var singerHeight =  singerOrigHeight * singerRatio;
 
+if(screenwidth > screenheight){
+    singerHeight = Math.floor(screenheight / 6);
+    singerRatio = singerHeight / singerOrigHeight;
+    singerWidth =  singerOrigWidth * singerRatio;
+}
+
 var singerSafeScreenWidth = screenwidth - singerWidth;
 var singerSafeScreenHeight = screenheight - singerHeight;
-
-var singerspots = [
-    [],[],[],[],[],[], // 0-5
-    [],[],[],[],[],[], // 6-11
-    [],[],[],[],[],[], // 12-17
-    [],[],[],[],[],[], // 18-23
-    [],[],[],[],[],[], // 24-29
-    [],[],[],[],[],[]
-]; // 30-35
-/*
-0  1  2  3  4  5
-6  7  8  9  10 11
-12 13 14 15 16 17
-18 19 20 21 22 23
-24 25 26 27 28 29
-*/
-// order
-// 14, 15, 20, 21, 13,16
-let singerspotorder = [
-    14,15,20,21,13,16,8,9,19,22,26,27,7,10,25,28,2,3,32,33,12,17,18,23,1,4,31,34,6,11,24,29,0,5,30,35
-];
-
-
-// determinining coordinates for singerspots
-var numsingerrows = Math.floor(screenheight / singerHeight);
-var numsingercols = Math.floor(screenwidth / singerWidth);
-console.log("signer size", singerWidth, singerHeight);
-console.log("singer rows/cols", numsingerrows, numsingercols);
-var spoti = 0;
-for(var row = 0; row< numsingerrows; row++){
-    var y = row * singerHeight;
-    for(var col = 0; col < numsingercols; col++){
-        var x = col * singerWidth;
-        if(row % 2 == 0){
-            x = x+ Math.floor(singerWidth / 2);
-        }
-        singerspots[spoti] = [x,y];
-        spoti++;
-    }
-}
-console.log("singerspots ", singerspots);
-// create the order of spots
-//  maybe some spots don't exist, because of teh size/orientation of the screen. Remove them from singersportorder
-singerspotorder = singerspotorder.filter((spot) => spot < spoti);
-
 
 // whether or not the config div is showing
 let showing_config_div = false;
@@ -170,9 +140,10 @@ let beaver_connection_ok = false;
 document.addEventListener('DOMContentLoaded', function() {
     console.log("starting");
 
+    /*
     screenwidth = (window.innerWidth > 0) ? window.innerWidth : screen.width;
     screenheight = (window.innerHeight > 0) ? window.innerHeight : screen.height;
-
+*/
     setup_config_vars();
     setup_beaver();
     setup_websockets();
@@ -445,7 +416,7 @@ function updateBeaverRaddec(raddec){
         star.style.position = "absolute";
         star.style.top = Math.floor(Math.random() * screenheight)+"px";
         star.style.left = Math.floor(Math.random() * screenwidth)+"px";
-        document.body.appendChild(star);
+        document.getElementById("owlidaycontent").appendChild(star);
         raddecElems[raddec.transmitterId] = star;
     }else{
         star = raddecElems[raddec.transmitterId];
@@ -551,7 +522,8 @@ function updateChannels(_myChannels, _allchannels){
     if (channelsElement) {
         channelsElement.textContent = JSON.stringify(myChannels, null, "  ");
     }
-    graphicsChannelSetup(myChannels, allChannels);
+//    graphicsChannelSetup(myChannels, allChannels);
+    placeSingers(myChannels, allChannels);
 }
 
 
@@ -900,32 +872,30 @@ function graphicsPlaceDynambs(dynamblist){
             iconelem.innerText = dynambicon;
             iconelem.style.position = "absolute";
 
-            iconelem.style.left = sposx;
-            iconelem.style.top = sposy;
+            iconelem.style.left = sposx.toString()+"px";
+            iconelem.style.top = sposy.toString()+"px";
             let rotationt = (Math.random() * 6) + 4;
             iconelem.style.animation = "rotation1 "+rotationt.toString()+"s linear 0s infinite normal none";
             let transform = (singercenterx - sposx).toString()+"px "+((singercentery - sposy)).toString()+"px";
             iconelem.style["transform-origin"] = transform;
 
-            document.body.appendChild(iconelem);           
+            document.getElementById("owlidaycontent").appendChild(iconelem);           
 
         }
     }
 }
 
-/**
- * Setup the singers on the screen
- * @param {*} channelList 
- * @param {*} allChannels 
- */
-function graphicsChannelSetup(channelList, allChannels){
+
+// Example usage in your context:
+function placeSingers(channelList, allChannels) {
+
     let singerindex = 0;
     let staying =  channelList.filter(x => prevMyChannels.includes(x));
     let adding = channelList.filter(x => !prevMyChannels.includes(x));
     let leaving = prevMyChannels.filter(x => !channelList.includes(x));
-
+    let channel = false;
     for(let i = 0; i < leaving.length; i++){
-        let channel = leaving[i];
+        channel = leaving[i];
         console.log("REMOVING " + channel);
         channelVoiceElems[channel][0].remove();
         channelVoiceElems[channel][1].remove();
@@ -939,8 +909,24 @@ function graphicsChannelSetup(channelList, allChannels){
         } 
     }
 
-    for(let i = 0; i < adding.length; i++){
-        let channel = adding[i];
+    const placements = placeElementsWithoutOverlap(
+        allChannels.length, 
+        screenwidth, 
+        screenheight, 
+        singerWidth, 
+        singerHeight
+    );
+
+    // Sort placements by distance from center to maintain order
+    placements.sort((a, b) => a.distanceFromCenter - b.distanceFromCenter);
+
+    let i = 0;
+    adding.forEach((channel, index) => {
+        let placementIndex = allChannels.indexOf(channel);
+        console.log("placing " + channel + " at " + placementIndex + " of " + placements.length);
+        const placement = placements[placementIndex];
+        
+       // channel = adding[i];
         console.log("ADDING " + channel);
         singerimage = singerimages[singerindex % singerimages.length];
         singer = [];
@@ -960,27 +946,93 @@ function graphicsChannelSetup(channelList, allChannels){
         singer[1].classList.add("singer");
         singer[0].style.position = "absolute";
         singer[1].style.position = "absolute";
+        
+        singer[0].style.left = `${placement.left}px`;
+        singer[1].style.left = `${placement.left}px`;
+        singer[0].style.top = `${placement.top}px`;
+        singer[1].style.top = `${placement.top}px`;
 
-//        let posleft =  Math.floor(Math.random() * singerSafeScreenWidth)+"px"; 
-//        let postop = Math.floor(Math.random() * singerSafeScreenHeight)+"px";
-//        let posleft =  Math.floor( singerSafeScreenWidth / 2) - (singerWidth / 2)+"px"; 
-//        let postop = Math.floor(singerSafeScreenHeight / 2) - (singerHeight / 2)+"px";
-
-        let posleft = singerspots[singerspotorder[channel]][0];
-        let postop = singerspots[singerspotorder[channel]][1];
-
-        singer[0].style.top = postop;
-        singer[1].style.top = postop;
-        singer[0].style.left = posleft;
-        singer[1].style.left = posleft;
-
-        console.log("singer placed " , channel,  singerspotorder[channel], postop, posleft);
-
-        document.body.appendChild(singer[0]);
-        document.body.appendChild(singer[1]);
-        channelVoiceElems[channel] = singer;
+        document.getElementById("owlidaycontent").appendChild(singer[0]);
+        document.getElementById("owlidaycontent").appendChild(singer[1]);
+        channelVoiceElems[channel] = singer;        
+        i++;
         singerindex++;
+
+    });
+}
+
+function placeElementsWithoutOverlap(numElements, windowWidth, windowHeight, elementWidth, elementHeight) {
+    const grid = [];
+    const elements = [];
+
+    const gridCols = Math.floor(windowWidth / elementWidth);
+    const gridRows = Math.floor(windowHeight / elementHeight);
+
+    // Create grid
+    for (let i = 0; i < gridRows; i++) {
+        grid[i] = new Array(gridCols).fill(false);
     }
+
+    // Calculate center grid coordinates
+    const centerRow = Math.floor(gridRows / 2);
+    const centerCol = Math.floor(gridCols / 2);
+
+    // Create a priority list of grid positions, sorted by distance from center
+    const gridPositions = [];
+    for (let row = 0; row < gridRows; row++) {
+        for (let col = 0; col < gridCols; col++) {
+            // Calculate distance from center using Euclidean distance
+            const distanceFromCenter = Math.sqrt(
+                Math.pow(row - centerRow, 2) + 
+                Math.pow(col - centerCol, 2)
+            );
+            
+            gridPositions.push({
+                row, 
+                col, 
+                distanceFromCenter
+            });
+        }
+    }
+
+    // Sort positions by distance from center (closest first)
+    gridPositions.sort((a, b) => a.distanceFromCenter - b.distanceFromCenter);
+
+    // Try to place elements
+    for (let i = 0; i < numElements; i++) {
+        let placed = false;
+        
+        // Go through sorted positions
+        for (const pos of gridPositions) {
+            const { row, col } = pos;
+
+            if (!grid[row][col]) {
+                // Mark grid position as occupied
+                grid[row][col] = true;
+
+                // Calculate pixel position
+                const left = col * elementWidth;
+                const top = row * elementHeight;
+
+                elements.push({
+                    left: left,
+                    top: top,
+                    distanceFromCenter: pos.distanceFromCenter
+                });
+
+                placed = true;
+                break;
+            }
+        }
+
+        // If we couldn't place an element, break
+        if (!placed) {
+            console.warn(`Could only place ${i + 1} elements out of ${numElements}`);
+            break;
+        }
+    }
+
+    return elements;
 }
 
 
