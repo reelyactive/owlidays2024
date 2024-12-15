@@ -42,7 +42,7 @@ var singerimages = [
 ]
 
 
-let db_active = true;
+let db_active = false;
 
 function dblog(text){
     if(db_active){
