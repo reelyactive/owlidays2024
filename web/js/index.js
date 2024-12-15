@@ -17,7 +17,6 @@ let dynambicons = {
     batteryPercentage: "🔋"
 };
 
-
 /**
  * Icons for the singers.
  * We are using images of Pareto Anywhere mascots for the singers,
@@ -43,16 +42,23 @@ var singerimages = [
 ]
 
 
+let db_active = true;
+
+function dblog(text){
+    if(db_active){
+        console.log(...arguments);
+    }
+}
 
 /*
 * everything below here you probably don't need to change.
 */
 
 let HOST =  window.location.host;
-console.log(HOST);
+dblog(HOST);
 HOST = HOST.replace(/:[0-9]+/,"");
 // remove port
-console.log(HOST);
+dblog(HOST);
 
 let DEFAULT_WEBSOCKET_PORT= 8098;
 let DEFAULT_WEBSERVER_PORT = 3003;
@@ -113,9 +119,9 @@ var footerheight = document.getElementById("footer").clientHeight;
 var screenwidth = document.getElementById("owlidaycontent").clientWidth;
 var screenheight = document.getElementById("owlidaycontent").clientHeight - footerheight;
 
-
-console.log("screenwidth", screenwidth);
-console.log("screenheight", screenheight);
+dblog("footerheight", footerheight);
+dblog("screenwidth", screenwidth);
+dblog("screenheight", screenheight);
 
 var singerWidth = Math.floor(screenwidth / 6);
 var singerRatio = singerWidth / singerOrigWidth;
@@ -138,7 +144,7 @@ let beaver_connection_ok = false;
 
 
 document.addEventListener('DOMContentLoaded', function() {
-    console.log("starting");
+    dblog("starting");
 
     /*
     screenwidth = (window.innerWidth > 0) ? window.innerWidth : screen.width;
@@ -171,7 +177,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // the client then starts playing the song at that time.
     document.querySelectorAll('.play').forEach(elem => {
         elem.addEventListener('click', function() {
-            console.log("starting");
+            dblog("starting");
             if(started){
                 // shuffle the instrument choices.
                 setupChannelPrograms();
@@ -244,24 +250,24 @@ function setup_websockets(){
     // to the `onopen` property.
     ws.onopen = function() {
         wsready = true;
-        console.log("opened " + ws.readyState);
+        dblog("opened " + ws.readyState);
         //   message("ready", data);
         timecheck();
     };
 
     ws.onerror = function(msg){
-        console.log("ws error");
-        console.log(msg);
+        dblog("ws error");
+        dblog(msg);
     }
 
     ws.onclose = function(msg){
-        console.log("wsclose");
-        console.log(msg);
+        dblog("wsclose");
+        dblog(msg);
     }
 
     // handle messages from the server
     ws.onmessage = function(event) {
-    //    console.log("got message ", event);
+    //    dblog("got message ", event);
         msg = JSON.parse(event.data);
 
         // this messaage isn't used.
@@ -276,7 +282,7 @@ function setup_websockets(){
 
         // this message is used to start the song and the specified time in the future
         if(msg.address == "startplaying"){
-            console.log("startingplaing", msg);
+            dblog("startingplaing", msg);
             midifile= msg.data.midifile;
             startGraphics();
             startMidiFile(msg.data.starttime);
@@ -289,7 +295,7 @@ function setup_websockets(){
 
         if(msg.address == "yourchannels"){
             // getting the list of channels for this player
-            console.log("yourchannels", msg);
+            dblog("yourchannels", msg);
             updateChannels(msg.data.channelList, msg.data.allChannels);
         }
     }
@@ -348,38 +354,38 @@ let raddecElems = {};
  */
 function setup_beaver(){
     // https://github.com/reelyactive/beaver
-    console.log("starting beaver "+ BEAVER_URL);
+    dblog("starting beaver "+ BEAVER_URL);
 
     beaver.stream("http://"+BEAVER_URL+":"+BEAVER_PORT, {io: io});
 
     // raddecs make stars!
     beaver.on("raddec", function(raddec){
-//        console.log("beaver raddec", raddec);
+//        dblog("beaver raddec", raddec);
         updateBeaverRaddec(raddec);
     });
     
     // dynambs are icons that float around the singers
     beaver.on("dynamb", function(dynamb){
-//        console.log("beaver dynamb", dynamb);
+//        dblog("beaver dynamb", dynamb);
         updateBeaverDynamb(dynamb);
     });
 
     // appearance of a device. Currently not used.
     beaver.on("appearance", function(deviceSignature, device){
-  //      console.log("beaver appearance", deviceSignature, device);
+  //      dblog("beaver appearance", deviceSignature, device);
     });
 
     // disappearance of a device. triggers the dissappearance of a star.
     beaver.on("disappearance", function(deviceSignature){
-//        console.log("beaver disappearance", deviceSignature);
+//        dblog("beaver disappearance", deviceSignature);
         removeBeaverDevice(deviceSignature);
     });
     beaver.on("error", function(e){
-        console.log("beaver error", e.name);
-        console.log(e.message);
-        console.log(BEAVER_URL);
+        dblog("beaver error", e.name);
+        dblog(e.message);
+        dblog(BEAVER_URL);
         if(e.message.match("Failed to GET") || e.message.match("Socket.IO connect error on")){
-            console.log("beaver not found");
+            dblog("beaver not found");
             beaver_connection_ok = false;
             if(!showing_config_div){
                 document.querySelectorAll('.configbuttondiv').forEach(elem => {
@@ -389,7 +395,7 @@ function setup_beaver(){
         }        
     })
     beaver.on("connect",function(e){
-        console.log("beaver connect  "+ BEAVER_URL);
+        dblog("beaver connect  "+ BEAVER_URL);
         document.querySelectorAll('.configbuttondiv').forEach(elem => {
             elem.style.display = 'none';
         });        
@@ -397,7 +403,7 @@ function setup_beaver(){
 
     });
     beaver.on("disconnect",function(e){
-        console.log("beaver disconnect  "+ BEAVER_URL);
+        dblog("beaver disconnect  "+ BEAVER_URL);
     });
 }
 
@@ -415,7 +421,7 @@ function updateBeaverRaddec(raddec){
         star.innerText = "⭐";
         star.style.position = "absolute";
         star.style.top = Math.floor(Math.random() * screenheight)+"px";
-        star.style.left = Math.floor(Math.random() * screenwidth)+"px";
+        star.style.left = Math.floor(Math.random() * screenwidth) - 10+"px";
         document.getElementById("owlidaycontent").appendChild(star);
         raddecElems[raddec.transmitterId] = star;
     }else{
@@ -430,7 +436,7 @@ function updateBeaverRaddec(raddec){
  * @param {*} deviceSignature 
  */
 function removeBeaverDevice(deviceSignature){
-//    console.log("removing ", deviceSignature);
+//    dblog("removing ", deviceSignature);
     if(raddecElems[deviceSignature]){
         raddecElems[deviceSignature].remove();
         delete raddecElems[deviceSignature];
@@ -454,7 +460,7 @@ function updateBeaverDynamb(dynamb){
  * @returns 
  */
 function gatherDynambs(){
-//    console.log("gatehr" );
+//    dblog("gatehr" );
     
     // put dynamb data into something a bit easier to manage
     let dynambs = allDynambDevices;
@@ -481,7 +487,7 @@ function gatherDynambs(){
  */
 function updateDynambs(){
     let dynamblist = gatherDynambs();
-  //  console.log(dynamblist);
+  //  dblog(dynamblist);
     let channelkeys = Object.keys(channelVoiceElems);
     let numchannels = channelkeys.length;
     if(numchannels == 0 || dynamblist.length == 0){
@@ -511,7 +517,7 @@ function updateDynambs(){
  * and rearrange the singers on the screen to match the channels.
  */
 function updateChannels(_myChannels, _allchannels){
-    console.log("updateChannels", _myChannels);
+    dblog("updateChannels", _myChannels);
     prevMyChannels = myChannels
     myChannels = _myChannels;
     allChannels = _allchannels;
@@ -550,7 +556,7 @@ function midievent(midievent){
     /*
     // this is a lot of debugging code to see what's going on with the midi event. 
     Commented out for now.
-    console.log(midievent,
+    dblog(midievent,
         midievent.getChannel(), 
         midievent.getNote(),  
         midievent.getVelocity(), 
@@ -569,11 +575,11 @@ function midievent(midievent){
     // midi notes on and off open and close the singers mouths 
     //by switching between the two images. 
     if(midievent.isNoteOn()){
-//        console.log("on", midievent.getChannel(), midievent.getNote());
+//        dblog("on", midievent.getChannel(), midievent.getNote());
         graphicsNoteOn(midievent.getChannel());
     }
     if(midievent.isNoteOff()){
-   //     console.log("off", midievent.getChannel(), midievent.getNote());
+   //     dblog("off", midievent.getChannel(), midievent.getNote());
         graphicsNoteOff(midievent.getChannel());
     }
 
@@ -670,7 +676,7 @@ function setMidiVoice(channel, bank, program){
  */
 function startMidiFile(starttime){
     let waittime = starttime - Date.now();
-    console.log("starting midi file at", starttime, waittime);
+    dblog("starting midi file at", starttime, waittime);
     const dbgElement = document.querySelector('.dbg');
     if (dbgElement) {
         dbgElement.textContent = `starting at ${starttime} in ${waittime}`;
@@ -683,7 +689,7 @@ function startMidiFile(starttime){
  * Load midi file from URL and pass to the Load function that sets up the midi data to play
  */
 function fromURL(starttime) {
-    console.log("fromURL");
+    dblog("fromURL");
     clear();
     var url = mididir + "/"+midifile;
     try {
@@ -726,7 +732,7 @@ function fromURL(starttime) {
  * or we might be seeking to a point in the song.
  */
 function load(data, name, starttime) {
-    console.log("load", name, starttime);
+    dblog("load", name, starttime);
     try {
 //        player = JZZ.MIDI.SMF(data).player();
         player = JZZ.MIDI.SMF(data).player();
@@ -735,7 +741,7 @@ function load(data, name, starttime) {
             midievent(msg);
         });      
         player.onEnd = function() {
-            console.log("sending song over");
+            dblog("sending song over");
             songOver();
             playing = false;
             started = false;
@@ -743,6 +749,7 @@ function load(data, name, starttime) {
         }
 
         let waittime = starttime - correctedNow();
+       // waittime = -10000; // testing song end
         if(waittime > 0){
             setTimeout(function(){
                 playing = true;
@@ -763,7 +770,8 @@ function load(data, name, starttime) {
         }else{
 
             let seektime = correctedNow()- starttime;
-            console.log("seeking to " + player.ms2tick(seektime));
+          //  seektime = 250000; // testing song end   
+            dblog("seeking to " + player.ms2tick(seektime));
             playing = true;
             player.play();
             player.jump(player.ms2tick(seektime));
@@ -773,7 +781,7 @@ function load(data, name, starttime) {
         }
     }
     catch (e) {
-        console.log(e);
+        dblog(e);
     }
 }
 
@@ -821,7 +829,7 @@ function startGraphics(){
 
 // show config and start buttons
 function stopGraphics(){
-    document.querySelector('.startandconfig').style.display = "block";
+    document.querySelector('.startandconfig').style.display = "flex";
 }
 
 /**
@@ -830,12 +838,12 @@ function stopGraphics(){
  * @param {*} dynamblist 
  */
 function graphicsPlaceDynambs(dynamblist){
-//    console.log("graphicsPlaceDynambs");
+//    dblog("graphicsPlaceDynambs");
 
     let channelkeys = Object.keys(channelVoiceElems);
     let numchannels = channelkeys.length;
 
-//    console.log("graphicsPlaceDynambs",channelVoiceElems);
+//    dblog("graphicsPlaceDynambs",channelVoiceElems);
 
     for(let i = 0; i < numchannels; i++){
         let channelelem = channelVoiceElems[channelkeys[i]];
@@ -896,7 +904,7 @@ function placeSingers(channelList, allChannels) {
     let channel = false;
     for(let i = 0; i < leaving.length; i++){
         channel = leaving[i];
-        console.log("REMOVING " + channel);
+        dblog("REMOVING " + channel);
         channelVoiceElems[channel][0].remove();
         channelVoiceElems[channel][1].remove();
         delete channelVoiceElems[channel];
@@ -923,11 +931,11 @@ function placeSingers(channelList, allChannels) {
     let i = 0;
     adding.forEach((channel, index) => {
         let placementIndex = allChannels.indexOf(channel);
-        console.log("placing " + channel + " at " + placementIndex + " of " + placements.length);
+        dblog("placing " + channel + " at " + placementIndex + " of " + placements.length);
         const placement = placements[placementIndex];
         
        // channel = adding[i];
-        console.log("ADDING " + channel);
+        dblog("ADDING " + channel);
         singerimage = singerimages[singerindex % singerimages.length];
         singer = [];
         singer[0]= document.createElement("img");
@@ -1055,7 +1063,7 @@ function graphicsNoteOn(channel){
                 }, 25);
             }
         }catch(e){
-            console.log("no element for channel "+ channel, e);
+            dblog("no element for channel "+ channel, e);
         }
     }
 }
@@ -1065,7 +1073,7 @@ function graphicsNoteOn(channel){
  * @param {*} channel 
  */ 
 function graphicsNoteOff(channel){
-  //  console.log("off", channel);
+  //  dblog("off", channel);
     channelsOn[channel] = false;     
     mouths--;       
     if(myChannels.includes(channel.toString())){  
@@ -1073,7 +1081,7 @@ function graphicsNoteOff(channel){
         try{
             channelVoiceElems[channel][1].style.display = "block";
         }catch(e){
-            console.log("no element for channel "+ channel, e);
+            dblog("no element for channel "+ channel, e);
         }
     }
 }
@@ -1114,7 +1122,7 @@ function dynScale(input, outmin, outmax){
     let diff = input - scalemin;
     let difffraction = diff / inrange;
     let output = difffraction * outrange + outmin;
-//    console.log(input, scalemin, scalemax,output );
+//    dblog(input, scalemin, scalemax,output );
 
     return output
 }
@@ -1129,12 +1137,12 @@ function message(address, data){
     let msg = {address : address,
         data: data};  
 
-    console.log("sending message ", address, msg);
+    dblog("sending message ", address, msg);
     if(wsready){
     //    var buf = new Buffer.from(JSON.stringify(msg));
         ws.send(JSON.stringify(msg));
     }else{
-        console.log("ws not ready");
+        dblog("ws not ready");
     }
 }
 
@@ -1163,13 +1171,13 @@ function timecheck(){
  * but maybe the lag was a lot more in one direction than the other).
  */
 function processServerTime(msg){
-    console.log("processservertime" , msg);
+    dblog("processservertime" , msg);
     let now = Date.now();
     let clientsend = msg.data.clientnow;
     let servertime = msg.data.servernow;
     let difference = msg.data.difference;
     let roundtrip = now - clientsend;
-    console.log("roundtrip ", roundtrip);
+    dblog("roundtrip ", roundtrip);
 //    timeskew = difference;
     timeskew = difference + (roundtrip/2);
 

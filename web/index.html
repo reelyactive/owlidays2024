@@ -12,10 +12,10 @@
         <script  type="text/javascript" src="./js/JZZ.midi.SMF.js"></script>
         <script type="module" src="./js/color-modes.js"></script>
         <script  type="text/javascript" src="./js/index.js" defer></script>
-        <link    rel="stylesheet" href="./index.css">
         <link    rel="stylesheet" href="./bootstrappyactive.min.css">
+        <link    rel="stylesheet" href="./index.css">
     </head>
-    <body>
+    <body class="d-flex flex-column vh-100 m-0 p-0">
         <!-- Navigation -->
         <nav class="navbar sticky-top navbar-expand-lg bg-body-tertiary shadow">
             <div class="container-fluid">
@@ -177,9 +177,9 @@
             </div>
         </nav>
 
-        <div id="owlidaycontent" class="owlidaycontent">
+        <div id="owlidaycontent" class="owlidaycontent flex-grow-1 d-flex flex-column">
 
-            <div class="startandconfig">
+            <div class="startandconfig flexitem flex">
                 <div class="flexitem playbuttondiv "><button class="play  buttonstyle1">Play!</button></div>
                 <div class="flexitem configbuttondiv"><button class="configbutton  buttonstyle1">Setup</button></div>
                 <div class="flexitem configdiv">
@@ -191,7 +191,7 @@
                         <button class="configformbutton restorebutton">Restore Defaults</button>
                 </div>
             </div>
-            <div class="countdowncontainer">
+            <div class="countdowncontainer flex">
                 <div class="countdown"></div>
             </div>
         </div>

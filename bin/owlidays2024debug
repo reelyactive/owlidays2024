@@ -8,7 +8,7 @@ let options = {
     WEBSOCKET_PORT : 8098,
     WEBSERVER_PORT : 3003,
     UDPLISTENPORT : 8089,
-    printErrors : false
+    printMessages : true
 }
 
 let owlidays = new Owlidays2024(options);

@@ -1,24 +1,17 @@
 body{
     background-color: black;
     color: white;
-    height: 100vh; /* Full viewport height */
-    margin: 0; /* Remove default body margin */
-
 }
 
 body {
-  margin: 0;
-  padding: 0;
   position: relative;
 }
 
 .owlidaycontent{
 
-  display: flex;
+  /*display: flex;*/
   justify-content: center; /* Center horizontally */
   align-items: center; /* Center vertically */
-  height: 100%; /* Full viewport height */
-  margin: 0; /* Remove default body margin */
   position: relative;
 }
 
@@ -57,7 +50,7 @@ p{
 
 .countdowncontainer{
     position:absolute;
-    display:flex;
+/*    display:flex;*/
     z-index: 10000;
 }
 
@@ -100,8 +93,6 @@ input{
 }
 
 .startandconfig{
-  position:absolute;
-  display:flex;
   z-index: 2000;
 }
 
